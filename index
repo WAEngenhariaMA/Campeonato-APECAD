@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8">
+  <title>Classificação APECAD 2025</title>
+  <style>
+    body {
+      margin: 0;
+      background-color: #000;
+    }
+    iframe {
+      width: 100vw;
+      height: 100vh;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <iframe title="Classificação APECAD 2025"
+    width="600" height="373.5"
+    src="https://app.powerbi.com/view?r=eyJrIjoiZWVkZDc0M2MtNWI0OC00YmQyLTk0YTYtOTI5ZmNkMjNkNmIwIiwidCI6ImIzOWRkNTQ0LTAwOTYtNDgyYS1iODRhLWVmOGM0ZTE2MDA0YSJ9&refresh=1"
+    frameborder="0" allowFullScreen="true">
+  </iframe>
+</body>
+</html>
