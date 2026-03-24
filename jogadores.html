@@ -1,194 +1,648 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Cadastro de Jogadores — APECAD 2026</title>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cadastro de Jogadores - APECAD 2026</title>
+    <style>
+      * {
+        box-sizing: border-box;
+      }
 
-<style>
-:root{
-  --azul:#1f6ec7;
-  --azul-escuro:#0f3d73;
-  --dourado:#e6b93d;
-  --branco:#ffffff;
-  --texto:#17324d;
-}
+      :root {
+        --azul-escuro: #0f3d73;
+        --azul-medio: #1f6ec7;
+        --azul-claro: #73bdf5;
+        --dourado: #e6b93d;
+        --dourado-forte: #c9961d;
+        --branco: #ffffff;
+        --texto: #17324d;
+        --fundo: #eef6ff;
+        --borda: #d7e6f7;
+        --sucesso: #168a4a;
+        --erro: #c0392b;
+        --cinza: #6b7f95;
+      }
 
-body{
-  margin:0;
-  font-family:Arial;
-  background:linear-gradient(135deg,#eaf4ff,#fdf6e3);
-  padding:24px;
-  color:var(--texto);
-}
+      body {
+        margin: 0;
+        font-family: Arial, Helvetica, sans-serif;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(115, 189, 245, 0.2),
+            rgba(230, 185, 61, 0.08)
+          ),
+          linear-gradient(135deg, #eaf4ff, #fffdf7);
+        min-height: 100vh;
+        padding: 24px 14px;
+        color: var(--texto);
+      }
 
-.container{
-  max-width:700px;
-  margin:auto;
-}
+      .container {
+        max-width: 820px;
+        margin: 0 auto;
+      }
 
-.card{
-  background:white;
-  border-radius:24px;
-  padding:28px;
-  box-shadow:0 12px 35px rgba(0,0,0,0.12);
-}
+      .card {
+        background: rgba(255, 255, 255, 0.98);
+        border: 2px solid rgba(230, 185, 61, 0.18);
+        border-radius: 26px;
+        box-shadow: 0 18px 45px rgba(15, 61, 115, 0.12);
+        padding: 28px;
+      }
 
-.logo{
-  text-align:center;
-  margin-bottom:20px;
-}
+      .topo {
+        text-align: center;
+        margin-bottom: 26px;
+      }
 
-.logo img{
-  width:200px;
-}
+      .logo-box {
+        width: 200px;
+        max-width: 100%;
+        margin: 0 auto 14px;
+      }
 
-h1{
-  text-align:center;
-  color:var(--azul-escuro);
-}
+      .logo-box img {
+        width: 100%;
+        display: block;
+        object-fit: contain;
+      }
 
-form{
-  display:grid;
-  gap:16px;
-}
+      h1 {
+        margin: 0;
+        font-size: 30px;
+        color: var(--azul-escuro);
+      }
 
-label{
-  font-weight:bold;
-}
+      .subtitulo {
+        margin: 10px auto 0;
+        max-width: 650px;
+        color: var(--cinza);
+        font-size: 15px;
+        line-height: 1.5;
+      }
 
-input, select{
-  height:48px;
-  border-radius:12px;
-  border:2px solid #dbe7ff;
-  padding:0 12px;
-  font-size:15px;
-}
+      .valor-box {
+        margin-top: 22px;
+        background: linear-gradient(135deg, #f7fbff, #fff9ea);
+        border: 1px solid rgba(31, 110, 199, 0.1);
+        border-radius: 18px;
+        padding: 16px;
+        text-align: center;
+      }
 
-button{
-  height:52px;
-  border:none;
-  border-radius:14px;
-  background:linear-gradient(135deg,var(--dourado),#c9961d);
-  color:white;
-  font-weight:bold;
-  font-size:16px;
-  cursor:pointer;
-}
+      .valor-label {
+        color: var(--azul-escuro);
+        font-weight: 700;
+        font-size: 14px;
+      }
 
-.mensagem{
-  margin-top:16px;
-  padding:12px;
-  border-radius:10px;
-  display:none;
-  font-weight:bold;
-}
+      .valor-numero {
+        margin-top: 6px;
+        color: var(--dourado-forte);
+        font-size: 28px;
+        font-weight: 900;
+      }
 
-.sucesso{
-  background:#e8f9f0;
-  color:#1f9d55;
-  display:block;
-}
+      form {
+        display: grid;
+        gap: 16px;
+        margin-top: 24px;
+      }
 
-.erro{
-  background:#fdecea;
-  color:#c0392b;
-  display:block;
-}
-</style>
-</head>
+      .campo {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
 
-<body>
+      .campo label {
+        font-size: 14px;
+        font-weight: 800;
+        color: var(--azul-escuro);
+      }
 
-<div class="container">
-  <div class="card">
+      .campo input,
+      .campo select,
+      .campo textarea {
+        width: 100%;
+        min-height: 50px;
+        border: 2px solid var(--borda);
+        border-radius: 14px;
+        padding: 0 14px;
+        font-size: 15px;
+        color: var(--texto);
+        background: var(--branco);
+        outline: none;
+        transition: 0.2s;
+      }
 
-    <div class="logo">
-      <img src="logo-apecad-2026.png" alt="Logo">
+      .campo input:focus,
+      .campo select:focus {
+        border-color: var(--azul-claro);
+        box-shadow: 0 0 0 4px rgba(115, 189, 245, 0.16);
+      }
+
+      .botao {
+        height: 54px;
+        border: none;
+        border-radius: 16px;
+        background: linear-gradient(
+          135deg,
+          var(--dourado),
+          var(--dourado-forte)
+        );
+        color: white;
+        font-size: 16px;
+        font-weight: 900;
+        cursor: pointer;
+        box-shadow: 0 10px 20px rgba(201, 150, 29, 0.22);
+        transition: 0.2s;
+      }
+
+      .botao:hover {
+        transform: translateY(-1px);
+        filter: brightness(1.03);
+      }
+
+      .botao:disabled,
+      input:disabled,
+      select:disabled {
+        opacity: 0.65;
+        cursor: not-allowed;
+      }
+
+      .mensagem {
+        margin-top: 16px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        display: none;
+        font-weight: 700;
+        font-size: 14px;
+      }
+
+      .mensagem.sucesso {
+        display: block;
+        background: rgba(22, 138, 74, 0.1);
+        border: 1px solid rgba(22, 138, 74, 0.18);
+        color: var(--sucesso);
+      }
+
+      .mensagem.erro {
+        display: block;
+        background: rgba(192, 57, 43, 0.08);
+        border: 1px solid rgba(192, 57, 43, 0.16);
+        color: var(--erro);
+      }
+
+      .bloco-pagamento {
+        display: none;
+        margin-top: 24px;
+        background: linear-gradient(180deg, #ffffff, #f7fbff);
+        border: 1px solid rgba(31, 110, 199, 0.1);
+        border-radius: 20px;
+        padding: 20px;
+      }
+
+      .bloco-pagamento.ativo {
+        display: block;
+      }
+
+      .bloco-pagamento h3 {
+        margin: 0 0 12px;
+        color: var(--azul-escuro);
+      }
+
+      .linha-info {
+        margin-bottom: 12px;
+        font-size: 14px;
+        color: var(--texto);
+      }
+
+      .qr-box {
+        text-align: center;
+        margin: 18px 0;
+      }
+
+      .qr-box img {
+        max-width: 260px;
+        width: 100%;
+        border-radius: 14px;
+        border: 1px solid #e4edf7;
+        background: white;
+        padding: 10px;
+      }
+
+      .pix-code {
+        width: 100%;
+        min-height: 110px;
+        resize: vertical;
+        border-radius: 14px;
+        border: 2px solid var(--borda);
+        padding: 12px;
+        font-size: 13px;
+        line-height: 1.4;
+        color: #234;
+        background: #fbfdff;
+      }
+
+      .acoes {
+        display: flex;
+        gap: 12px;
+        flex-wrap: wrap;
+        margin-top: 14px;
+      }
+
+      .acoes button {
+        flex: 1 1 220px;
+        height: 48px;
+        border-radius: 14px;
+        border: none;
+        cursor: pointer;
+        font-weight: 800;
+        font-size: 14px;
+      }
+
+      .btn-secundario {
+        background: #edf5ff;
+        color: var(--azul-escuro);
+        border: 1px solid #d8e8fa;
+      }
+
+      .status-pagamento {
+        margin-top: 16px;
+        padding: 14px 16px;
+        border-radius: 14px;
+        font-size: 14px;
+        font-weight: 800;
+        background: #f6f9fd;
+        color: var(--azul-escuro);
+        border: 1px solid #e0ebf7;
+      }
+
+      .loading {
+        opacity: 0.75;
+        pointer-events: none;
+      }
+
+      @media (max-width: 640px) {
+        .card {
+          padding: 20px;
+        }
+
+        h1 {
+          font-size: 26px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="card" id="cardPrincipal">
+        <div class="topo">
+          <div class="logo-box">
+            <img src="logo-apecad-2026.png" alt="Logo do campeonato" />
+          </div>
+          <h1>Cadastro de Jogadores</h1>
+          <p class="subtitulo">
+            Preencha os dados do atleta. O cadastro será concluído somente após
+            a confirmação do pagamento Pix de R$ 50,00.
+          </p>
+
+          <div class="valor-box">
+            <div class="valor-label">Valor da inscrição</div>
+            <div class="valor-numero">R$ 50,00</div>
+          </div>
+        </div>
+
+        <form id="formJogador">
+          <div class="campo">
+            <label for="nome">Nome Completo</label>
+            <input
+              type="text"
+              id="nome"
+              placeholder="Digite o nome completo"
+              required
+            />
+          </div>
+
+          <div class="campo">
+            <label for="documento">RG ou CPF</label>
+            <input
+              type="text"
+              id="documento"
+              placeholder="Digite RG ou CPF"
+              required
+            />
+          </div>
+
+          <div class="campo">
+            <label for="celular">Celular</label>
+            <input
+              type="text"
+              id="celular"
+              placeholder="(99) 99999-9999"
+              required
+            />
+          </div>
+
+          <div class="campo">
+            <label for="posicao">Posição</label>
+            <select id="posicao" required>
+              <option value="">Selecione</option>
+              <option value="Zagueiro">Zagueiro</option>
+              <option value="Meia">Meia</option>
+              <option value="Atacante">Atacante</option>
+            </select>
+          </div>
+
+          <button type="submit" id="btnPagar" class="botao">
+            Gerar Pix de R$ 50,00
+          </button>
+        </form>
+
+        <div id="mensagem" class="mensagem"></div>
+
+        <div id="blocoPagamento" class="bloco-pagamento">
+          <h3>Pagamento Pix gerado</h3>
+
+          <div class="linha-info"><strong>Valor:</strong> R$ 50,00</div>
+          <div class="linha-info">
+            <strong>TXID:</strong> <span id="txidPagamento">-</span>
+          </div>
+
+          <div class="qr-box" id="qrBox" style="display: none">
+            <img id="qrImage" alt="QR Code Pix" />
+          </div>
+
+          <div class="campo">
+            <label for="pixCopiaCola">Pix copia e cola</label>
+            <textarea id="pixCopiaCola" class="pix-code" readonly></textarea>
+          </div>
+
+          <div class="acoes">
+            <button type="button" class="btn-secundario" id="btnCopiarPix">
+              Copiar código Pix
+            </button>
+            <button
+              type="button"
+              class="btn-secundario"
+              id="btnVerificarPagamento"
+            >
+              Verificar pagamento
+            </button>
+          </div>
+
+          <div class="status-pagamento" id="statusPagamento">
+            Aguardando confirmação do pagamento...
+          </div>
+        </div>
+      </div>
     </div>
 
-    <h1>Cadastro de Jogadores</h1>
+    <script>
+      /*
+      IMPORTANTE:
+      Estes endpoints são do seu back-end.
+      Não coloque token do Mercado Pago aqui.
+    */
+      const API_BASE = "https://SEU-BACKEND.com";
+      const ENDPOINT_CRIAR = `${API_BASE}/api/criar-pagamento-jogador`;
+      const ENDPOINT_STATUS = `${API_BASE}/api/status-pagamento-jogador`;
 
-    <form id="formJogador">
+      const VALOR_FIXO = 50.0;
 
-      <div>
-        <label>Nome Completo</label>
-        <input id="nome" required>
-      </div>
+      const formJogador = document.getElementById("formJogador");
+      const cardPrincipal = document.getElementById("cardPrincipal");
+      const mensagem = document.getElementById("mensagem");
+      const blocoPagamento = document.getElementById("blocoPagamento");
+      const btnPagar = document.getElementById("btnPagar");
+      const btnCopiarPix = document.getElementById("btnCopiarPix");
+      const btnVerificarPagamento = document.getElementById(
+        "btnVerificarPagamento",
+      );
+      const txidPagamento = document.getElementById("txidPagamento");
+      const pixCopiaCola = document.getElementById("pixCopiaCola");
+      const statusPagamento = document.getElementById("statusPagamento");
+      const qrBox = document.getElementById("qrBox");
+      const qrImage = document.getElementById("qrImage");
 
-      <div>
-        <label>RG ou CPF</label>
-        <input id="documento" required>
-      </div>
+      const campoNome = document.getElementById("nome");
+      const campoDocumento = document.getElementById("documento");
+      const campoCelular = document.getElementById("celular");
+      const campoPosicao = document.getElementById("posicao");
 
-      <div>
-        <label>Celular</label>
-        <input id="celular" placeholder="(99) 99999-9999" required>
-      </div>
+      let pagamentoAtual = null;
+      let pollingAtivo = null;
 
-      <div>
-        <label>Posição</label>
-        <select id="posicao" required>
-          <option value="">Selecione</option>
-          <option>Zagueiro</option>
-          <option>Meio</option>
-          <option>Atacante</option>
-        </select>
-      </div>
+      function mostrarMensagem(texto, tipo) {
+        mensagem.className = `mensagem ${tipo}`;
+        mensagem.textContent = texto;
+      }
 
-      <button type="submit">Cadastrar Jogador</button>
+      function limparMensagem() {
+        mensagem.className = "mensagem";
+        mensagem.textContent = "";
+      }
 
-    </form>
+      function setLoading(ativo) {
+        if (ativo) {
+          cardPrincipal.classList.add("loading");
+        } else {
+          cardPrincipal.classList.remove("loading");
+        }
+      }
 
-    <div id="mensagem" class="mensagem"></div>
+      function bloquearFormulario(bloquear) {
+        campoNome.disabled = bloquear;
+        campoDocumento.disabled = bloquear;
+        campoCelular.disabled = bloquear;
+        campoPosicao.disabled = bloquear;
+        btnPagar.disabled = bloquear;
+      }
 
-  </div>
-</div>
+      function normalizarCelular(valor) {
+        const numeros = valor.replace(/\D/g, "").slice(0, 11);
+        if (numeros.length <= 10) {
+          return numeros.replace(
+            /(\d{2})(\d{0,4})(\d{0,4})/,
+            function (_, a, b, c) {
+              let out = a ? `(${a}` : "";
+              if (a && a.length === 2) out += ") ";
+              if (b) out += b;
+              if (c) out += "-" + c;
+              return out.trim();
+            },
+          );
+        }
+        return numeros.replace(
+          /(\d{2})(\d{5})(\d{0,4})/,
+          function (_, a, b, c) {
+            let out = `(${a}) ${b}`;
+            if (c) out += "-" + c;
+            return out;
+          },
+        );
+      }
 
-<script>
-const API_URL = "COLE_AQUI_SUA_URL_DO_APPS_SCRIPT";
+      campoCelular.addEventListener("input", () => {
+        campoCelular.value = normalizarCelular(campoCelular.value);
+      });
 
-const form = document.getElementById("formJogador");
-const mensagem = document.getElementById("mensagem");
+      function iniciarTelaPagamento(data) {
+        pagamentoAtual = {
+          txid: data?.pagamento?.txid || "",
+          codigoPix: data?.pagamento?.codigoPix || "",
+          qrCodeBase64: data?.pagamento?.qrCodeBase64 || "",
+        };
 
-form.addEventListener("submit", async e => {
-  e.preventDefault();
+        txidPagamento.textContent = pagamentoAtual.txid || "-";
+        pixCopiaCola.value = pagamentoAtual.codigoPix || "";
 
-  mensagem.className = "mensagem";
+        if (pagamentoAtual.qrCodeBase64) {
+          qrImage.src = pagamentoAtual.qrCodeBase64.startsWith("data:image")
+            ? pagamentoAtual.qrCodeBase64
+            : `data:image/png;base64,${pagamentoAtual.qrCodeBase64}`;
+          qrBox.style.display = "block";
+        } else {
+          qrBox.style.display = "none";
+        }
 
-  const payload = {
-    rota:"cadastrarJogador",
-    nome:document.getElementById("nome").value.trim(),
-    documento:document.getElementById("documento").value.trim(),
-    celular:document.getElementById("celular").value.trim(),
-    posicao:document.getElementById("posicao").value
-  };
+        statusPagamento.textContent = "Aguardando confirmação do pagamento...";
+        blocoPagamento.classList.add("ativo");
+      }
 
-  try{
+      async function copiarPix() {
+        try {
+          await navigator.clipboard.writeText(pixCopiaCola.value || "");
+          mostrarMensagem("Código Pix copiado com sucesso.", "sucesso");
+        } catch (erro) {
+          mostrarMensagem("Não foi possível copiar o código Pix.", "erro");
+        }
+      }
 
-    const resp = await fetch(API_URL,{
-      method:"POST",
-      headers:{ "Content-Type":"text/plain;charset=utf-8" },
-      body:JSON.stringify(payload)
-    });
+      async function verificarPagamento(manual = false) {
+        if (!pagamentoAtual?.txid) return;
 
-    const data = await resp.json();
+        try {
+          const resp = await fetch(
+            `${ENDPOINT_STATUS}?txid=${encodeURIComponent(pagamentoAtual.txid)}`,
+          );
+          const data = await resp.json();
 
-    if(data.ok){
-      mensagem.textContent = data.mensagem;
-      mensagem.classList.add("sucesso");
-      form.reset();
-    }else{
-      mensagem.textContent = data.mensagem;
-      mensagem.classList.add("erro");
-    }
+          if (!data.ok) {
+            if (manual) {
+              mostrarMensagem(
+                data.mensagem || "Não foi possível verificar o pagamento.",
+                "erro",
+              );
+            }
+            return;
+          }
 
-  }catch(err){
-    mensagem.textContent = "Erro ao conectar.";
-    mensagem.classList.add("erro");
-  }
-});
-</script>
+          const status = String(data.status || "").toUpperCase();
 
-</body>
+          if (
+            status === "PAGO" ||
+            status === "APPROVED" ||
+            status === "APROVADO"
+          ) {
+            statusPagamento.textContent =
+              "Pagamento confirmado. Cadastro concluído com sucesso.";
+            mostrarMensagem(
+              "Pagamento confirmado e cadastro concluído.",
+              "sucesso",
+            );
+            bloquearFormulario(true);
+            btnVerificarPagamento.disabled = true;
+            clearInterval(pollingAtivo);
+            pollingAtivo = null;
+            return;
+          }
+
+          statusPagamento.textContent =
+            "Pagamento ainda não confirmado. Assim que o Pix cair, o cadastro será concluído.";
+          if (manual) {
+            mostrarMensagem("Pagamento ainda pendente.", "erro");
+          }
+        } catch (erro) {
+          if (manual) {
+            mostrarMensagem("Erro ao consultar o status do pagamento.", "erro");
+          }
+        }
+      }
+
+      function iniciarPollingPagamento() {
+        if (pollingAtivo) {
+          clearInterval(pollingAtivo);
+        }
+
+        pollingAtivo = setInterval(() => {
+          verificarPagamento(false);
+        }, 5000);
+      }
+
+      formJogador.addEventListener("submit", async function (e) {
+        e.preventDefault();
+        limparMensagem();
+
+        const payload = {
+          nome: campoNome.value.trim(),
+          documento: campoDocumento.value.trim(),
+          celular: campoCelular.value.trim(),
+          posicao: campoPosicao.value,
+          valor: VALOR_FIXO,
+        };
+
+        if (
+          !payload.nome ||
+          !payload.documento ||
+          !payload.celular ||
+          !payload.posicao
+        ) {
+          mostrarMensagem("Preencha todos os campos.", "erro");
+          return;
+        }
+
+        try {
+          setLoading(true);
+
+          const resp = await fetch(ENDPOINT_CRIAR, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(payload),
+          });
+
+          const data = await resp.json();
+
+          if (!resp.ok || !data.ok) {
+            mostrarMensagem(
+              data.mensagem || "Não foi possível gerar o pagamento Pix.",
+              "erro",
+            );
+            return;
+          }
+
+          iniciarTelaPagamento(data);
+          mostrarMensagem(
+            "Pix gerado com sucesso. Faça o pagamento para concluir o cadastro.",
+            "sucesso",
+          );
+          iniciarPollingPagamento();
+        } catch (erro) {
+          mostrarMensagem("Erro ao gerar o pagamento Pix.", "erro");
+        } finally {
+          setLoading(false);
+        }
+      });
+
+      btnCopiarPix.addEventListener("click", copiarPix);
+      btnVerificarPagamento.addEventListener("click", () =>
+        verificarPagamento(true),
+      );
+    </script>
+  </body>
 </html>
