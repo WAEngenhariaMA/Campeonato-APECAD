@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro de Jogadores — APECAD 2026</title>
+
+<style>
+:root{
+  --azul:#1f6ec7;
+  --azul-escuro:#0f3d73;
+  --dourado:#e6b93d;
+  --branco:#ffffff;
+  --texto:#17324d;
+}
+
+body{
+  margin:0;
+  font-family:Arial;
+  background:linear-gradient(135deg,#eaf4ff,#fdf6e3);
+  padding:24px;
+  color:var(--texto);
+}
+
+.container{
+  max-width:700px;
+  margin:auto;
+}
+
+.card{
+  background:white;
+  border-radius:24px;
+  padding:28px;
+  box-shadow:0 12px 35px rgba(0,0,0,0.12);
+}
+
+.logo{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+.logo img{
+  width:200px;
+}
+
+h1{
+  text-align:center;
+  color:var(--azul-escuro);
+}
+
+form{
+  display:grid;
+  gap:16px;
+}
+
+label{
+  font-weight:bold;
+}
+
+input, select{
+  height:48px;
+  border-radius:12px;
+  border:2px solid #dbe7ff;
+  padding:0 12px;
+  font-size:15px;
+}
+
+button{
+  height:52px;
+  border:none;
+  border-radius:14px;
+  background:linear-gradient(135deg,var(--dourado),#c9961d);
+  color:white;
+  font-weight:bold;
+  font-size:16px;
+  cursor:pointer;
+}
+
+.mensagem{
+  margin-top:16px;
+  padding:12px;
+  border-radius:10px;
+  display:none;
+  font-weight:bold;
+}
+
+.sucesso{
+  background:#e8f9f0;
+  color:#1f9d55;
+  display:block;
+}
+
+.erro{
+  background:#fdecea;
+  color:#c0392b;
+  display:block;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+  <div class="card">
+
+    <div class="logo">
+      <img src="logo-apecad-2026.png" alt="Logo">
+    </div>
+
+    <h1>Cadastro de Jogadores</h1>
+
+    <form id="formJogador">
+
+      <div>
+        <label>Nome Completo</label>
+        <input id="nome" required>
+      </div>
+
+      <div>
+        <label>RG ou CPF</label>
+        <input id="documento" required>
+      </div>
+
+      <div>
+        <label>Celular</label>
+        <input id="celular" placeholder="(99) 99999-9999" required>
+      </div>
+
+      <div>
+        <label>Posição</label>
+        <select id="posicao" required>
+          <option value="">Selecione</option>
+          <option>Zagueiro</option>
+          <option>Meio</option>
+          <option>Atacante</option>
+        </select>
+      </div>
+
+      <button type="submit">Cadastrar Jogador</button>
+
+    </form>
+
+    <div id="mensagem" class="mensagem"></div>
+
+  </div>
+</div>
+
+<script>
+const API_URL = "COLE_AQUI_SUA_URL_DO_APPS_SCRIPT";
+
+const form = document.getElementById("formJogador");
+const mensagem = document.getElementById("mensagem");
+
+form.addEventListener("submit", async e => {
+  e.preventDefault();
+
+  mensagem.className = "mensagem";
+
+  const payload = {
+    rota:"cadastrarJogador",
+    nome:document.getElementById("nome").value.trim(),
+    documento:document.getElementById("documento").value.trim(),
+    celular:document.getElementById("celular").value.trim(),
+    posicao:document.getElementById("posicao").value
+  };
+
+  try{
+
+    const resp = await fetch(API_URL,{
+      method:"POST",
+      headers:{ "Content-Type":"text/plain;charset=utf-8" },
+      body:JSON.stringify(payload)
+    });
+
+    const data = await resp.json();
+
+    if(data.ok){
+      mensagem.textContent = data.mensagem;
+      mensagem.classList.add("sucesso");
+      form.reset();
+    }else{
+      mensagem.textContent = data.mensagem;
+      mensagem.classList.add("erro");
+    }
+
+  }catch(err){
+    mensagem.textContent = "Erro ao conectar.";
+    mensagem.classList.add("erro");
+  }
+});
+</script>
+
+</body>
+</html>
