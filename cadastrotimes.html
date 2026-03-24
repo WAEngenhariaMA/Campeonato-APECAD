@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
   <head>
     <meta charset="UTF-8" />
@@ -369,7 +369,7 @@
 
     <script>
       const API_URL =
-        "https://script.google.com/macros/s/AKfycbx53ZO5MUJIEr71-Sp3teu9yN1wRxFuaSCe4WCwi40NreSK0pqV7c2c2pJqudwNxr9qQA/exec";
+        "https://script.google.com/macros/s/AKfycbwenYbxFPnP5-botL_UODOKKtp1cCVLFrRxIH1fYHSxkoxzc0dQcNHkwjosflrOyrNr/exec";
 
       const form = document.getElementById("formCadastro");
       const representante1 = document.getElementById("representante1");
@@ -461,7 +461,7 @@
 
           totalCadastrados.textContent = data.totalCadastrados ?? 0;
           vagasRestantes.textContent = data.vagasRestantes ?? 0;
-          totalSelecoes.textContent = 12;
+          totalSelecoes.textContent = (data.selecoesDisponiveis || []).length;
 
           preencherSelectSelecoes(data.selecoesDisponiveis || []);
           renderChips(chipsOcupadas, data.selecoesEscolhidas || [], "ocupada");
