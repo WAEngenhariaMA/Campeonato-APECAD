@@ -407,12 +407,13 @@
       Estes endpoints são do seu back-end.
       Não coloque token do Mercado Pago aqui.
     */
-      const API_BASE = "https://SEU-BACKEND.com";
-      const ENDPOINT_CRIAR = `${API_BASE}/api/criar-pagamento-jogador`;
-      const ENDPOINT_STATUS = `${API_BASE}/api/status-pagamento-jogador`;
+      const API_BASE =
+        "https://script.google.com/macros/s/AKfycby6PBHOUo5tmRUbP7BfsfvC2b2XlCoPxkh2_IVlDY3swWxdf2NwmtvXRRdgX64_W1Y4tQ/exec";
+
+      const ENDPOINT_CRIAR = API_BASE;
+      const ENDPOINT_STATUS = API_BASE;
 
       const VALOR_FIXO = 50.0;
-
       const formJogador = document.getElementById("formJogador");
       const cardPrincipal = document.getElementById("cardPrincipal");
       const mensagem = document.getElementById("mensagem");
