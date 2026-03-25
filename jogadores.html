@@ -527,9 +527,20 @@
         if (!pagamentoAtual?.txid) return;
 
         try {
-          const resp = await fetch(
-            `${ENDPOINT_STATUS}?txid=${encodeURIComponent(pagamentoAtual.txid)}`,
-          );
+          const resp = await fetch(ENDPOINT_STATUS, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify({
+              rota: "verificarPagamento",
+              txid: pagamentoAtual.txid,
+              nome: campoNome.value.trim(),
+              documento: campoDocumento.value.trim(),
+              celular: campoCelular.value.trim(),
+              posicao: campoPosicao.value,
+            }),
+          });
           const data = await resp.json();
 
           if (!data.ok) {
@@ -612,9 +623,15 @@
           const resp = await fetch(ENDPOINT_CRIAR, {
             method: "POST",
             headers: {
-              "Content-Type": "application/json",
+              "Content-Type": "text/plain;charset=utf-8",
             },
-            body: JSON.stringify(payload),
+            body: JSON.stringify({
+              rota: "criarPagamento",
+              nome: campoNome.value.trim(),
+              documento: campoDocumento.value.trim(),
+              celular: campoCelular.value.trim(),
+              posicao: campoPosicao.value,
+            }),
           });
 
           const data = await resp.json();
