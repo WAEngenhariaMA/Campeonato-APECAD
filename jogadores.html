@@ -40,14 +40,14 @@
       }
 
       .container {
-        max-width: 820px;
+        max-width: 860px;
         margin: 0 auto;
       }
 
       .card {
         background: rgba(255, 255, 255, 0.98);
         border: 2px solid rgba(230, 185, 61, 0.18);
-        border-radius: 26px;
+        border-radius: 28px;
         box-shadow: 0 18px 45px rgba(15, 61, 115, 0.12);
         padding: 28px;
       }
@@ -69,10 +69,11 @@
         object-fit: contain;
       }
 
-      h1 {
+      .titulo {
         margin: 0;
         font-size: 30px;
         color: var(--azul-escuro);
+        font-weight: 900;
       }
 
       .subtitulo {
@@ -127,7 +128,7 @@
       .campo select,
       .campo textarea {
         width: 100%;
-        min-height: 50px;
+        min-height: 52px;
         border: 2px solid var(--borda);
         border-radius: 14px;
         padding: 0 14px;
@@ -138,14 +139,21 @@
         transition: 0.2s;
       }
 
+      .campo textarea {
+        min-height: 110px;
+        padding: 12px 14px;
+        resize: vertical;
+      }
+
       .campo input:focus,
-      .campo select:focus {
+      .campo select:focus,
+      .campo textarea:focus {
         border-color: var(--azul-claro);
         box-shadow: 0 0 0 4px rgba(115, 189, 245, 0.16);
       }
 
-      .botao {
-        height: 54px;
+      .botao-principal {
+        height: 56px;
         border: none;
         border-radius: 16px;
         background: linear-gradient(
@@ -154,27 +162,29 @@
           var(--dourado-forte)
         );
         color: white;
-        font-size: 16px;
+        font-size: 17px;
         font-weight: 900;
         cursor: pointer;
         box-shadow: 0 10px 20px rgba(201, 150, 29, 0.22);
         transition: 0.2s;
       }
 
-      .botao:hover {
+      .botao-principal:hover {
         transform: translateY(-1px);
         filter: brightness(1.03);
       }
 
-      .botao:disabled,
+      .botao-principal:disabled,
+      .botao-secundario:disabled,
       input:disabled,
-      select:disabled {
+      select:disabled,
+      textarea:disabled {
         opacity: 0.65;
         cursor: not-allowed;
       }
 
       .mensagem {
-        margin-top: 16px;
+        margin-top: 18px;
         padding: 14px 16px;
         border-radius: 14px;
         display: none;
@@ -198,10 +208,10 @@
 
       .bloco-pagamento {
         display: none;
-        margin-top: 24px;
+        margin-top: 26px;
         background: linear-gradient(180deg, #ffffff, #f7fbff);
         border: 1px solid rgba(31, 110, 199, 0.1);
-        border-radius: 20px;
+        border-radius: 22px;
         padding: 20px;
       }
 
@@ -210,19 +220,22 @@
       }
 
       .bloco-pagamento h3 {
-        margin: 0 0 12px;
+        margin: 0 0 14px;
         color: var(--azul-escuro);
+        font-size: 22px;
       }
 
       .linha-info {
-        margin-bottom: 12px;
+        margin-bottom: 10px;
         font-size: 14px;
         color: var(--texto);
+        line-height: 1.5;
       }
 
       .qr-box {
         text-align: center;
         margin: 18px 0;
+        display: none;
       }
 
       .qr-box img {
@@ -234,40 +247,23 @@
         padding: 10px;
       }
 
-      .pix-code {
-        width: 100%;
-        min-height: 110px;
-        resize: vertical;
-        border-radius: 14px;
-        border: 2px solid var(--borda);
-        padding: 12px;
-        font-size: 13px;
-        line-height: 1.4;
-        color: #234;
-        background: #fbfdff;
-      }
-
       .acoes {
         display: flex;
         gap: 12px;
         flex-wrap: wrap;
-        margin-top: 14px;
+        margin-top: 16px;
       }
 
-      .acoes button {
+      .botao-secundario {
         flex: 1 1 220px;
         height: 48px;
         border-radius: 14px;
-        border: none;
-        cursor: pointer;
-        font-weight: 800;
-        font-size: 14px;
-      }
-
-      .btn-secundario {
+        border: 1px solid #d8e8fa;
         background: #edf5ff;
         color: var(--azul-escuro);
-        border: 1px solid #d8e8fa;
+        font-weight: 800;
+        font-size: 14px;
+        cursor: pointer;
       }
 
       .status-pagamento {
@@ -279,6 +275,7 @@
         background: #f6f9fd;
         color: var(--azul-escuro);
         border: 1px solid #e0ebf7;
+        line-height: 1.5;
       }
 
       .loading {
@@ -291,7 +288,7 @@
           padding: 20px;
         }
 
-        h1 {
+        .titulo {
           font-size: 26px;
         }
       }
@@ -302,12 +299,13 @@
       <div class="card" id="cardPrincipal">
         <div class="topo">
           <div class="logo-box">
-            <img src="logo-apecad-2026.png" alt="Logo do campeonato" />
+            <img src="img/logoapecad.png" alt="Logo do campeonato" />
           </div>
-          <h1>Cadastro de Jogadores</h1>
+
+          <h1 class="titulo">Cadastro de Jogadores</h1>
           <p class="subtitulo">
-            Preencha os dados do atleta. O cadastro será concluído somente após
-            a confirmação do pagamento Pix de R$ 50,00.
+            Preencha os dados do atleta. O cadastro só será concluído após a
+            confirmação do pagamento Pix.
           </p>
 
           <div class="valor-box">
@@ -357,7 +355,7 @@
             </select>
           </div>
 
-          <button type="submit" id="btnPagar" class="botao">
+          <button type="submit" id="btnGerarPix" class="botao-principal">
             Gerar Pix de R$ 50,00
           </button>
         </form>
@@ -372,22 +370,22 @@
             <strong>TXID:</strong> <span id="txidPagamento">-</span>
           </div>
 
-          <div class="qr-box" id="qrBox" style="display: none">
+          <div class="qr-box" id="qrBox">
             <img id="qrImage" alt="QR Code Pix" />
           </div>
 
           <div class="campo">
             <label for="pixCopiaCola">Pix copia e cola</label>
-            <textarea id="pixCopiaCola" class="pix-code" readonly></textarea>
+            <textarea id="pixCopiaCola" readonly></textarea>
           </div>
 
           <div class="acoes">
-            <button type="button" class="btn-secundario" id="btnCopiarPix">
+            <button type="button" class="botao-secundario" id="btnCopiarPix">
               Copiar código Pix
             </button>
             <button
               type="button"
-              class="btn-secundario"
+              class="botao-secundario"
               id="btnVerificarPagamento"
             >
               Verificar pagamento
@@ -402,37 +400,30 @@
     </div>
 
     <script>
-      /*
-      IMPORTANTE:
-      Estes endpoints são do seu back-end.
-      Não coloque token do Mercado Pago aqui.
-    */
-      const API_BASE =
+      const API_URL =
         "https://script.google.com/macros/s/AKfycbytcCLuzKO6FvX0IxhR8kt-u9NCRV7qbnXMsebZIyWHJ-kwK2g6mIkSwmY2ML8yKfi0rQ/exec";
-
-      const ENDPOINT_CRIAR = API_BASE;
-      const ENDPOINT_STATUS = API_BASE;
-
       const VALOR_FIXO = 50.0;
-      const formJogador = document.getElementById("formJogador");
+
       const cardPrincipal = document.getElementById("cardPrincipal");
+      const formJogador = document.getElementById("formJogador");
       const mensagem = document.getElementById("mensagem");
       const blocoPagamento = document.getElementById("blocoPagamento");
-      const btnPagar = document.getElementById("btnPagar");
+      const btnGerarPix = document.getElementById("btnGerarPix");
       const btnCopiarPix = document.getElementById("btnCopiarPix");
       const btnVerificarPagamento = document.getElementById(
         "btnVerificarPagamento",
       );
-      const txidPagamento = document.getElementById("txidPagamento");
-      const pixCopiaCola = document.getElementById("pixCopiaCola");
-      const statusPagamento = document.getElementById("statusPagamento");
-      const qrBox = document.getElementById("qrBox");
-      const qrImage = document.getElementById("qrImage");
 
       const campoNome = document.getElementById("nome");
       const campoDocumento = document.getElementById("documento");
       const campoCelular = document.getElementById("celular");
       const campoPosicao = document.getElementById("posicao");
+
+      const txidPagamento = document.getElementById("txidPagamento");
+      const pixCopiaCola = document.getElementById("pixCopiaCola");
+      const statusPagamento = document.getElementById("statusPagamento");
+      const qrBox = document.getElementById("qrBox");
+      const qrImage = document.getElementById("qrImage");
 
       let pagamentoAtual = null;
       let pollingAtivo = null;
@@ -460,11 +451,12 @@
         campoDocumento.disabled = bloquear;
         campoCelular.disabled = bloquear;
         campoPosicao.disabled = bloquear;
-        btnPagar.disabled = bloquear;
+        btnGerarPix.disabled = bloquear;
       }
 
-      function normalizarCelular(valor) {
+      function formatarCelular(valor) {
         const numeros = valor.replace(/\D/g, "").slice(0, 11);
+
         if (numeros.length <= 10) {
           return numeros.replace(
             /(\d{2})(\d{0,4})(\d{0,4})/,
@@ -477,6 +469,7 @@
             },
           );
         }
+
         return numeros.replace(
           /(\d{2})(\d{5})(\d{0,4})/,
           function (_, a, b, c) {
@@ -488,18 +481,45 @@
       }
 
       campoCelular.addEventListener("input", () => {
-        campoCelular.value = normalizarCelular(campoCelular.value);
+        campoCelular.value = formatarCelular(campoCelular.value);
       });
 
-      function iniciarTelaPagamento(data) {
+      function obterPayloadFormulario() {
+        return {
+          nome: campoNome.value.trim(),
+          documento: campoDocumento.value.trim(),
+          celular: campoCelular.value.trim(),
+          posicao: campoPosicao.value,
+        };
+      }
+
+      function validarFormulario(payload) {
+        if (
+          !payload.nome ||
+          !payload.documento ||
+          !payload.celular ||
+          !payload.posicao
+        ) {
+          mostrarMensagem("Preencha todos os campos.", "erro");
+          return false;
+        }
+        return true;
+      }
+
+      function iniciarTelaPagamento(data, payload) {
         pagamentoAtual = {
-          txid: data?.pagamento?.txid || "",
-          codigoPix: data?.pagamento?.codigoPix || "",
-          qrCodeBase64: data?.pagamento?.qrCodeBase64 || "",
+          txid: String(data.txid || ""),
+          codigoPix: data.codigoPix || "",
+          qrCodeBase64: data.qrCodeBase64 || "",
+          nome: payload.nome,
+          documento: payload.documento,
+          celular: payload.celular,
+          posicao: payload.posicao,
         };
 
         txidPagamento.textContent = pagamentoAtual.txid || "-";
         pixCopiaCola.value = pagamentoAtual.codigoPix || "";
+        statusPagamento.textContent = "Aguardando confirmação do pagamento...";
 
         if (pagamentoAtual.qrCodeBase64) {
           qrImage.src = pagamentoAtual.qrCodeBase64.startsWith("data:image")
@@ -510,7 +530,6 @@
           qrBox.style.display = "none";
         }
 
-        statusPagamento.textContent = "Aguardando confirmação do pagamento...";
         blocoPagamento.classList.add("ativo");
       }
 
@@ -524,10 +543,10 @@
       }
 
       async function verificarPagamento(manual = false) {
-        if (!pagamentoAtual?.txid) return;
+        if (!pagamentoAtual || !pagamentoAtual.txid) return;
 
         try {
-          const resp = await fetch(ENDPOINT_STATUS, {
+          const resp = await fetch(API_URL, {
             method: "POST",
             headers: {
               "Content-Type": "text/plain;charset=utf-8",
@@ -535,12 +554,13 @@
             body: JSON.stringify({
               rota: "verificarPagamento",
               txid: pagamentoAtual.txid,
-              nome: campoNome.value.trim(),
-              documento: campoDocumento.value.trim(),
-              celular: campoCelular.value.trim(),
-              posicao: campoPosicao.value,
+              nome: pagamentoAtual.nome,
+              documento: pagamentoAtual.documento,
+              celular: pagamentoAtual.celular,
+              posicao: pagamentoAtual.posicao,
             }),
           });
+
           const data = await resp.json();
 
           if (!data.ok) {
@@ -555,28 +575,28 @@
 
           const status = String(data.status || "").toUpperCase();
 
-          if (
-            status === "PAGO" ||
-            status === "APPROVED" ||
-            status === "APROVADO"
-          ) {
+          if (status === "PAGO") {
             statusPagamento.textContent =
               "Pagamento confirmado. Cadastro concluído com sucesso.";
             mostrarMensagem(
-              "Pagamento confirmado e cadastro concluído.",
+              "Pagamento confirmado e jogador cadastrado com sucesso.",
               "sucesso",
             );
             bloquearFormulario(true);
             btnVerificarPagamento.disabled = true;
-            clearInterval(pollingAtivo);
-            pollingAtivo = null;
+
+            if (pollingAtivo) {
+              clearInterval(pollingAtivo);
+              pollingAtivo = null;
+            }
             return;
           }
 
           statusPagamento.textContent =
-            "Pagamento ainda não confirmado. Assim que o Pix cair, o cadastro será concluído.";
+            "Pagamento ainda pendente. Assim que o Pix for aprovado, o cadastro será concluído.";
+
           if (manual) {
-            mostrarMensagem("Pagamento ainda pendente.", "erro");
+            mostrarMensagem("Pagamento ainda não confirmado.", "erro");
           }
         } catch (erro) {
           if (manual) {
@@ -599,58 +619,49 @@
         e.preventDefault();
         limparMensagem();
 
-        const payload = {
-          nome: campoNome.value.trim(),
-          documento: campoDocumento.value.trim(),
-          celular: campoCelular.value.trim(),
-          posicao: campoPosicao.value,
-          valor: VALOR_FIXO,
-        };
+        const payload = obterPayloadFormulario();
 
-        if (
-          !payload.nome ||
-          !payload.documento ||
-          !payload.celular ||
-          !payload.posicao
-        ) {
-          mostrarMensagem("Preencha todos os campos.", "erro");
+        if (!validarFormulario(payload)) {
           return;
         }
 
         try {
           setLoading(true);
 
-          const resp = await fetch(ENDPOINT_CRIAR, {
+          const resp = await fetch(API_URL, {
             method: "POST",
             headers: {
               "Content-Type": "text/plain;charset=utf-8",
             },
             body: JSON.stringify({
               rota: "criarPagamento",
-              nome: campoNome.value.trim(),
-              documento: campoDocumento.value.trim(),
-              celular: campoCelular.value.trim(),
-              posicao: campoPosicao.value,
+              nome: payload.nome,
+              documento: payload.documento,
+              celular: payload.celular,
+              posicao: payload.posicao,
+              valor: VALOR_FIXO,
             }),
           });
 
           const data = await resp.json();
 
-          if (!resp.ok || !data.ok) {
+          if (!data.ok) {
+            console.error("Erro API criarPagamento:", data);
             mostrarMensagem(
-              data.mensagem || "Não foi possível gerar o pagamento Pix.",
+              data.mensagem || "Erro ao gerar o pagamento Pix.",
               "erro",
             );
             return;
           }
 
-          iniciarTelaPagamento(data);
+          iniciarTelaPagamento(data, payload);
           mostrarMensagem(
             "Pix gerado com sucesso. Faça o pagamento para concluir o cadastro.",
             "sucesso",
           );
           iniciarPollingPagamento();
         } catch (erro) {
+          console.error("Erro ao gerar Pix:", erro);
           mostrarMensagem("Erro ao gerar o pagamento Pix.", "erro");
         } finally {
           setLoading(false);
