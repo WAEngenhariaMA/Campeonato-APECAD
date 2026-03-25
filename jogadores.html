@@ -17,11 +17,10 @@
         --dourado-forte: #c9961d;
         --branco: #ffffff;
         --texto: #17324d;
-        --fundo: #eef6ff;
+        --cinza: #6b7f95;
         --borda: #d7e6f7;
         --sucesso: #168a4a;
         --erro: #c0392b;
-        --cinza: #6b7f95;
       }
 
       body {
@@ -78,7 +77,7 @@
 
       .subtitulo {
         margin: 10px auto 0;
-        max-width: 650px;
+        max-width: 680px;
         color: var(--cinza);
         font-size: 15px;
         line-height: 1.5;
@@ -230,6 +229,7 @@
         font-size: 14px;
         color: var(--texto);
         line-height: 1.5;
+        word-break: break-word;
       }
 
       .qr-box {
@@ -264,6 +264,10 @@
         font-weight: 800;
         font-size: 14px;
         cursor: pointer;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .status-pagamento {
@@ -287,7 +291,6 @@
         .card {
           padding: 20px;
         }
-
         .titulo {
           font-size: 26px;
         }
@@ -299,18 +302,18 @@
       <div class="card" id="cardPrincipal">
         <div class="topo">
           <div class="logo-box">
-            <img src="img/logoapecad.png" alt="Logo do campeonato" />
+            <img src="logo-apecad-2026.png" alt="Logo do campeonato" />
           </div>
 
           <h1 class="titulo">Cadastro de Jogadores</h1>
           <p class="subtitulo">
-            Preencha os dados do atleta. O cadastro só será concluído após a
-            confirmação do pagamento Pix.
+            Preencha os dados do atleta e gere o Pix da inscrição. O cadastro só
+            será concluído após a aprovação do pagamento.
           </p>
 
           <div class="valor-box">
             <div class="valor-label">Valor da inscrição</div>
-            <div class="valor-numero">R$ 50,00</div>
+            <div class="valor-numero" id="valorExibido">R$ 50,00</div>
           </div>
         </div>
 
@@ -326,13 +329,18 @@
           </div>
 
           <div class="campo">
-            <label for="documento">RG ou CPF</label>
+            <label for="email">E-mail</label>
             <input
-              type="text"
-              id="documento"
-              placeholder="Digite RG ou CPF"
+              type="email"
+              id="email"
+              placeholder="Digite seu e-mail"
               required
             />
+          </div>
+
+          <div class="campo">
+            <label for="cpf">CPF</label>
+            <input type="text" id="cpf" placeholder="Digite o CPF" required />
           </div>
 
           <div class="campo">
@@ -365,9 +373,11 @@
         <div id="blocoPagamento" class="bloco-pagamento">
           <h3>Pagamento Pix gerado</h3>
 
-          <div class="linha-info"><strong>Valor:</strong> R$ 50,00</div>
           <div class="linha-info">
-            <strong>TXID:</strong> <span id="txidPagamento">-</span>
+            <strong>Valor:</strong> <span id="valorPagamento">R$ 50,00</span>
+          </div>
+          <div class="linha-info">
+            <strong>Payment ID:</strong> <span id="paymentIdTexto">-</span>
           </div>
 
           <div class="qr-box" id="qrBox">
@@ -390,6 +400,14 @@
             >
               Verificar pagamento
             </button>
+            <a
+              href="#"
+              target="_blank"
+              class="botao-secundario"
+              id="btnAbrirTicket"
+              style="display: none"
+              >Abrir instruções do Pix</a
+            >
           </div>
 
           <div class="status-pagamento" id="statusPagamento">
@@ -401,8 +419,7 @@
 
     <script>
       const API_URL =
-        "https://script.google.com/macros/s/AKfycbwW5M5rj9Pk3ACztY_7sEByQD4ANbuJR-zONiSo51Si9xulf90zxbi6vsdJWcvUsrxPew/exec";
-      const VALOR_FIXO = 50.0;
+        "https://script.google.com/macros/s/AKfycbzsDHbqW3_wCktU2JmaKVzAqr1pXhVq7htBAYJCjPm8OFQJU0NDgP9-8F7iCrJ8r8omLg/exec";
 
       const cardPrincipal = document.getElementById("cardPrincipal");
       const formJogador = document.getElementById("formJogador");
@@ -413,13 +430,17 @@
       const btnVerificarPagamento = document.getElementById(
         "btnVerificarPagamento",
       );
+      const btnAbrirTicket = document.getElementById("btnAbrirTicket");
 
       const campoNome = document.getElementById("nome");
-      const campoDocumento = document.getElementById("documento");
+      const campoEmail = document.getElementById("email");
+      const campoCpf = document.getElementById("cpf");
       const campoCelular = document.getElementById("celular");
       const campoPosicao = document.getElementById("posicao");
 
-      const txidPagamento = document.getElementById("txidPagamento");
+      const valorExibido = document.getElementById("valorExibido");
+      const valorPagamento = document.getElementById("valorPagamento");
+      const paymentIdTexto = document.getElementById("paymentIdTexto");
       const pixCopiaCola = document.getElementById("pixCopiaCola");
       const statusPagamento = document.getElementById("statusPagamento");
       const qrBox = document.getElementById("qrBox");
@@ -427,6 +448,7 @@
 
       let pagamentoAtual = null;
       let pollingAtivo = null;
+      let valorAtual = 50;
 
       function mostrarMensagem(texto, tipo) {
         mensagem.className = `mensagem ${tipo}`;
@@ -439,24 +461,33 @@
       }
 
       function setLoading(ativo) {
-        if (ativo) {
-          cardPrincipal.classList.add("loading");
-        } else {
-          cardPrincipal.classList.remove("loading");
-        }
+        if (ativo) cardPrincipal.classList.add("loading");
+        else cardPrincipal.classList.remove("loading");
       }
 
       function bloquearFormulario(bloquear) {
         campoNome.disabled = bloquear;
-        campoDocumento.disabled = bloquear;
+        campoEmail.disabled = bloquear;
+        campoCpf.disabled = bloquear;
         campoCelular.disabled = bloquear;
         campoPosicao.disabled = bloquear;
         btnGerarPix.disabled = bloquear;
       }
 
-      function formatarCelular(valor) {
-        const numeros = valor.replace(/\D/g, "").slice(0, 11);
+      function somenteDigitos(valor) {
+        return String(valor || "").replace(/\D/g, "");
+      }
 
+      function formatarCpf(valor) {
+        const v = somenteDigitos(valor).slice(0, 11);
+        return v
+          .replace(/^(\d{3})(\d)/, "$1.$2")
+          .replace(/^(\d{3})\.(\d{3})(\d)/, "$1.$2.$3")
+          .replace(/\.(\d{3})(\d)/, ".$1-$2");
+      }
+
+      function formatarCelular(valor) {
+        const numeros = somenteDigitos(valor).slice(0, 11);
         if (numeros.length <= 10) {
           return numeros.replace(
             /(\d{2})(\d{0,4})(\d{0,4})/,
@@ -469,7 +500,6 @@
             },
           );
         }
-
         return numeros.replace(
           /(\d{2})(\d{5})(\d{0,4})/,
           function (_, a, b, c) {
@@ -480,14 +510,39 @@
         );
       }
 
+      function moedaBRL(valor) {
+        return Number(valor).toLocaleString("pt-BR", {
+          style: "currency",
+          currency: "BRL",
+        });
+      }
+
+      campoCpf.addEventListener("input", () => {
+        campoCpf.value = formatarCpf(campoCpf.value);
+      });
+
       campoCelular.addEventListener("input", () => {
         campoCelular.value = formatarCelular(campoCelular.value);
       });
 
+      async function carregarConfig() {
+        try {
+          const resp = await fetch(`${API_URL}?rota=config`);
+          const data = await resp.json();
+
+          if (data.ok && data.price) {
+            valorAtual = Number(data.price);
+            valorExibido.textContent = moedaBRL(valorAtual);
+            valorPagamento.textContent = moedaBRL(valorAtual);
+          }
+        } catch (_) {}
+      }
+
       function obterPayloadFormulario() {
         return {
           nome: campoNome.value.trim(),
-          documento: campoDocumento.value.trim(),
+          email: campoEmail.value.trim(),
+          cpf: somenteDigitos(campoCpf.value),
           celular: campoCelular.value.trim(),
           posicao: campoPosicao.value,
         };
@@ -496,38 +551,59 @@
       function validarFormulario(payload) {
         if (
           !payload.nome ||
-          !payload.documento ||
+          !payload.email ||
+          !payload.cpf ||
           !payload.celular ||
           !payload.posicao
         ) {
           mostrarMensagem("Preencha todos os campos.", "erro");
           return false;
         }
+
+        if (payload.cpf.length !== 11) {
+          mostrarMensagem("Informe um CPF válido com 11 dígitos.", "erro");
+          return false;
+        }
+
+        if (!payload.email.includes("@")) {
+          mostrarMensagem("Informe um e-mail válido.", "erro");
+          return false;
+        }
+
         return true;
       }
 
       function iniciarTelaPagamento(data, payload) {
         pagamentoAtual = {
-          txid: String(data.txid || ""),
-          codigoPix: data.codigoPix || "",
-          qrCodeBase64: data.qrCodeBase64 || "",
+          paymentId: String(data.paymentId || ""),
+          qrCode: data.pagamento?.qrCode || "",
+          qrCodeBase64: data.pagamento?.qrCodeBase64 || "",
+          ticketUrl: data.pagamento?.ticketUrl || "",
           nome: payload.nome,
-          documento: payload.documento,
+          email: payload.email,
+          cpf: payload.cpf,
           celular: payload.celular,
           posicao: payload.posicao,
         };
 
-        txidPagamento.textContent = pagamentoAtual.txid || "-";
-        pixCopiaCola.value = pagamentoAtual.codigoPix || "";
+        paymentIdTexto.textContent = pagamentoAtual.paymentId || "-";
+        pixCopiaCola.value = pagamentoAtual.qrCode || "";
         statusPagamento.textContent = "Aguardando confirmação do pagamento...";
 
         if (pagamentoAtual.qrCodeBase64) {
           qrImage.src = pagamentoAtual.qrCodeBase64.startsWith("data:image")
             ? pagamentoAtual.qrCodeBase64
-            : `data:image/png;base64,${pagamentoAtual.qrCodeBase64}`;
+            : `data:image/jpeg;base64,${pagamentoAtual.qrCodeBase64}`;
           qrBox.style.display = "block";
         } else {
           qrBox.style.display = "none";
+        }
+
+        if (pagamentoAtual.ticketUrl) {
+          btnAbrirTicket.href = pagamentoAtual.ticketUrl;
+          btnAbrirTicket.style.display = "inline-flex";
+        } else {
+          btnAbrirTicket.style.display = "none";
         }
 
         blocoPagamento.classList.add("ativo");
@@ -537,13 +613,13 @@
         try {
           await navigator.clipboard.writeText(pixCopiaCola.value || "");
           mostrarMensagem("Código Pix copiado com sucesso.", "sucesso");
-        } catch (erro) {
+        } catch (_) {
           mostrarMensagem("Não foi possível copiar o código Pix.", "erro");
         }
       }
 
       async function verificarPagamento(manual = false) {
-        if (!pagamentoAtual || !pagamentoAtual.txid) return;
+        if (!pagamentoAtual?.paymentId) return;
 
         try {
           const resp = await fetch(API_URL, {
@@ -553,23 +629,18 @@
             },
             body: JSON.stringify({
               rota: "verificarPagamento",
-              txid: pagamentoAtual.txid,
-              nome: pagamentoAtual.nome,
-              documento: pagamentoAtual.documento,
-              celular: pagamentoAtual.celular,
-              posicao: pagamentoAtual.posicao,
+              paymentId: pagamentoAtual.paymentId,
             }),
           });
 
           const data = await resp.json();
 
           if (!data.ok) {
-            if (manual) {
+            if (manual)
               mostrarMensagem(
                 data.mensagem || "Não foi possível verificar o pagamento.",
                 "erro",
               );
-            }
             return;
           }
 
@@ -594,25 +665,17 @@
 
           statusPagamento.textContent =
             "Pagamento ainda pendente. Assim que o Pix for aprovado, o cadastro será concluído.";
-
-          if (manual) {
+          if (manual)
             mostrarMensagem("Pagamento ainda não confirmado.", "erro");
-          }
-        } catch (erro) {
-          if (manual) {
+        } catch (_) {
+          if (manual)
             mostrarMensagem("Erro ao consultar o status do pagamento.", "erro");
-          }
         }
       }
 
       function iniciarPollingPagamento() {
-        if (pollingAtivo) {
-          clearInterval(pollingAtivo);
-        }
-
-        pollingAtivo = setInterval(() => {
-          verificarPagamento(false);
-        }, 5000);
+        if (pollingAtivo) clearInterval(pollingAtivo);
+        pollingAtivo = setInterval(() => verificarPagamento(false), 5000);
       }
 
       formJogador.addEventListener("submit", async function (e) {
@@ -621,9 +684,7 @@
 
         const payload = obterPayloadFormulario();
 
-        if (!validarFormulario(payload)) {
-          return;
-        }
+        if (!validarFormulario(payload)) return;
 
         try {
           setLoading(true);
@@ -636,10 +697,10 @@
             body: JSON.stringify({
               rota: "criarPagamento",
               nome: payload.nome,
-              documento: payload.documento,
+              email: payload.email,
+              cpf: payload.cpf,
               celular: payload.celular,
               posicao: payload.posicao,
-              valor: VALOR_FIXO,
             }),
           });
 
@@ -672,6 +733,8 @@
       btnVerificarPagamento.addEventListener("click", () =>
         verificarPagamento(true),
       );
+
+      carregarConfig();
     </script>
   </body>
 </html>
